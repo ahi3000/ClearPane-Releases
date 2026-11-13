@@ -1,4 +1,4 @@
-# ClearPane – installieren mit einer Zeile (PowerShell, keine Admin-Rechte nötig):
+﻿# ClearPane – installieren mit einer Zeile (PowerShell, keine Admin-Rechte nötig):
 #   irm https://raw.githubusercontent.com/ahi3000/ClearPane-Releases/main/install.ps1 | iex
 # Lädt das neueste Setup von dieser Seite, prüft die SHA-256-Prüfsumme und installiert nach
 # %LocalAppData%\Programs\ClearPane. Updates holt sich ClearPane danach selbst.
@@ -9,7 +9,16 @@ $Api = "https://api.github.com/repos/$Repository/releases/latest"
 $Headers = @{ "User-Agent" = "ClearPane-Installer"; "Accept" = "application/vnd.github+json" }
 
 Write-Host "ClearPane: suche die neueste Version ..." -ForegroundColor Cyan
-$release = Invoke-RestMethod -Uri $Api -Headers $Headers
+# Older Windows PowerShell defaults to TLS 1.0, which GitHub refuses.
+[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+try {
+    $release = Invoke-RestMethod -Uri $Api -Headers $Headers
+}
+catch {
+    Write-Host "Noch keine Version veröffentlicht oder GitHub gerade nicht erreichbar." -ForegroundColor Yellow
+    Write-Host "Download-Seite: https://github.com/$Repository/releases" -ForegroundColor Yellow
+    return
+}
 $version = $release.tag_name.TrimStart("v")
 $setupName = "ClearPane-$version-setup.exe"
 $setup = $release.assets | Where-Object { $_.name -eq $setupName } | Select-Object -First 1
