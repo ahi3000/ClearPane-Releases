@@ -32,7 +32,11 @@ New-Item -ItemType Directory -Path $folder -Force | Out-Null
 $target = Join-Path $folder $setupName
 Write-Host "Lade ClearPane $version ($([math]::Round($setup.size / 1MB, 1)) MB) ..." -ForegroundColor Cyan
 Invoke-WebRequest -Uri $setup.browser_download_url -OutFile $target -Headers $Headers -UseBasicParsing
-$expected = ((Invoke-WebRequest -Uri $checksum.browser_download_url -Headers $Headers -UseBasicParsing).Content -split "\s+")[0].Trim().ToLowerInvariant()
+# GitHub serves .sha256 as binary – Windows PowerShell would hand back bytes, so read it as a text file instead.
+$checksumFile = "$target.sha256"
+Invoke-WebRequest -Uri $checksum.browser_download_url -OutFile $checksumFile -Headers $Headers -UseBasicParsing
+$expected = ((Get-Content -Path $checksumFile -Raw) -split "\s+")[0].Trim().ToLowerInvariant()
+Remove-Item $checksumFile -Force -ErrorAction SilentlyContinue
 $actual = (Get-FileHash $target -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($expected -ne $actual) {
     Remove-Item $target -Force
