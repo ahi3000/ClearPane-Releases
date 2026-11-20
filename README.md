@@ -10,11 +10,16 @@ Diese Seite enthält nur die fertigen Downloads. Der Quellcode liegt nicht hier.
 
 👉 [ClearPane-setup.exe (neueste Version)](https://github.com/ahi3000/ClearPane-Releases/releases/latest/download/ClearPane-setup.exe)
 
-**Oder mit einer Zeile in PowerShell** (lädt das Setup, prüft die SHA-256-Prüfsumme, installiert):
+**Oder in PowerShell** (lädt das Setup als Datei herunter und startet es – wie ein Download im Browser):
 
 ```powershell
-irm https://raw.githubusercontent.com/ahi3000/ClearPane-Releases/main/install.ps1 | iex
+$f = "$env:TEMP\ClearPane-setup.exe"
+Invoke-WebRequest "https://github.com/ahi3000/ClearPane-Releases/releases/latest/download/ClearPane-setup.exe" -OutFile $f -UseBasicParsing
+Start-Process $f
 ```
+
+> Früher stand hier `irm … | iex`. Microsoft Defender meldet solche Befehle, die ein Skript direkt aus dem Internet
+> ausführen, inzwischen oft als Trojaner (Fehlalarm). Der Weg oben lädt nur das Setup herunter und startet es.
 
 - Keine Admin-Rechte nötig, installiert nach `%LocalAppData%\Programs\ClearPane`
 - Bringt alles mit, was es braucht – kein .NET oder sonstiges vorher installieren

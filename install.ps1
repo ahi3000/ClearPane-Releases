@@ -1,5 +1,5 @@
-# ClearPane – installieren mit einer Zeile (PowerShell, keine Admin-Rechte nötig):
-#   irm https://raw.githubusercontent.com/ahi3000/ClearPane-Releases/main/install.ps1 | iex
+# ClearPane – Installationsskript (PowerShell, keine Admin-Rechte nötig). Bleibt für ältere Anleitungen erhalten;
+# empfohlen ist das Setup aus dem README, weil Defender "irm … | iex" oft als Trojaner meldet (Fehlalarm).
 # Lädt das neueste Setup von dieser Seite, prüft die SHA-256-Prüfsumme und installiert nach
 # %LocalAppData%\Programs\ClearPane. Updates holt sich ClearPane danach selbst.
 
